@@ -1,0 +1,22 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "tonyfettes/small"
+
+import(
+  "moonbitlang/core/bytes"
+)
+
+// Values
+fn bytes(@bytes.View) -> SmallBytes
+
+// Errors
+
+// Types and methods
+type SmallBytes
+fn SmallBytes::length(Self) -> Int
+fn SmallBytes::op_as_view(Self, start? : Int, end? : Int) -> Self
+fn SmallBytes::op_get(Self, Int) -> Byte
+
+// Type aliases
+
+// Traits
+
