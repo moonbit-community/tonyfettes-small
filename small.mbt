@@ -151,3 +151,27 @@ pub fn SmallBytes::op_get(self : SmallBytes, index : Int) -> Byte {
     Some(buf) => buf.unsafe_get(self.off.to_int() + index)
   }
 }
+
+///|
+pub impl Eq for SmallBytes with equal(self : SmallBytes, other : SmallBytes) -> Bool {
+  match self.buf {
+    None => self.off == other.off && self.len == other.len
+    Some(b1) => {
+      let self_len = self.len.to_int()
+      let other_len = other.len.to_int()
+      if self_len != other_len {
+        return false
+      }
+      let b2 = other.buf.unwrap()
+      let self_off = self.off.to_int()
+      let other_off = other.off.to_int()
+      for i in 0..<self_len {
+        if b1.unsafe_get(self_off + i) != b2.unsafe_get(other_off + i) {
+          break false
+        }
+      } else {
+        true
+      }
+    }
+  }
+}
