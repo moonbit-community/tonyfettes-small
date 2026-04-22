@@ -13,7 +13,7 @@ pub fn bytes(bytes : BytesView) -> SmallBytes {
     let off = for i = 0, off = 0UL; i < old_len; {
       let b = bytes.unsafe_get(i)
       continue i + 1, off | (b.to_uint64() << (i * 8))
-    } else {
+    } nobreak {
       off
     }
     let len = old_len.to_uint64() << 56
@@ -30,7 +30,7 @@ pub fn bytes(bytes : BytesView) -> SmallBytes {
     let new_len = for i = 8, new_len = 0UL; i < old_len; {
       let b = bytes.unsafe_get(i)
       continue i + 1, new_len | (b.to_uint64() << ((i - 8) * 8))
-    } else {
+    } nobreak {
       new_len
     }
     let len = (old_len.to_uint64() << 56) | new_len
@@ -103,7 +103,7 @@ pub fn SmallBytes::op_as_view(
         let new_off = for i = 0, off = 0UL; i < sem_len; {
           let b = buf.unsafe_get(self.off.to_int() + start + i)
           continue i + 1, off | (b.to_uint64() << (i * 8))
-        } else {
+        } nobreak {
           off
         }
         let new_len = sem_len.to_uint64() << 56
@@ -120,7 +120,7 @@ pub fn SmallBytes::op_as_view(
         let new_len = for i = 8, new_len = 0UL; i < sem_len; {
           let b = buf.unsafe_get(self.off.to_int() + start + i)
           continue i + 1, new_len | (b.to_uint64() << ((i - 8) * 8))
-        } else {
+        } nobreak {
           new_len
         }
         let new_len = (sem_len.to_uint64() << 56) | new_len
@@ -169,7 +169,7 @@ pub impl Eq for SmallBytes with equal(self : SmallBytes, other : SmallBytes) -> 
         if b1.unsafe_get(self_off + i) != b2.unsafe_get(other_off + i) {
           break false
         }
-      } else {
+      } nobreak {
         true
       }
     }
