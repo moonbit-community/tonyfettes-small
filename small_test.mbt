@@ -116,13 +116,18 @@ test "small_bytes/equality" {
 test "bench/test" {
   let text : Bytes = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer varius metus ac nulla ornare, ac dictum ante tincidunt. Praesent quis fringilla neque. Vestibulum eu placerat leo. Phasellus dictum turpis sit amet odio faucibus maximus. Proin imperdiet sit amet nulla in blandit. Nulla feugiat lorem ac ultrices tempor. Donec eu nunc at leo ullamcorper consequat. Sed tincidunt tortor sed libero consectetur vulputate. Nam rutrum, leo ut tempus aliquam, eros velit porttitor leo, sed sollicitudin erat lectus eu magna. Suspendisse blandit diam vitae quam tempor, et sagittis nibh vestibulum. Cras pulvinar velit elementum elit tristique, at volutpat purus eleifend. Integer lacinia nisi turpis, non dignissim leo pulvinar sed. Vivamus a arcu mi. Pellentesque id sem porttitor, tempor turpis a, efficitur ligula. In tristique lectus bibendum commodo tristique. Sed sodales neque quis ex ultrices ultricies. Donec commodo mauris eleifend, ornare orci id, imperdiet nibh. Fusce congue ac nibh ac vehicula. Donec euismod sed dolor at facilisis. In justo nisi, placerat eget rhoncus sed, euismod vel justo. Proin accumsan diam nec libero dignissim, eget sagittis dui laoreet. Duis laoreet, nunc sed dignissim consectetur, arcu metus rutrum dui, ut rutrum tortor diam in leo. Nulla ut sollicitudin nunc. Pellentesque nec varius lectus. Aliquam nec dolor sagittis libero malesuada bibendum. Nam rhoncus maximus metus, posuere aliquet leo hendrerit a. Maecenas ac faucibus eros. Pellentesque venenatis bibendum mi ac mollis. Vivamus lacinia vestibulum laoreet. Vivamus eu efficitur metus. Suspendisse fermentum metus magna, a pretium dui dapibus vitae. Cras maximus convallis semper. Morbi consectetur consequat nisi, eu dapibus turpis venenatis nec. Quisque nec turpis lectus. Cras a lacinia lorem. Donec bibendum augue vel enim dictum, in lobortis ante iaculis. Vivamus euismod tortor non tellus porttitor egestas. Morbi sed tempor lorem. Donec porta tristique turpis ut mollis. In quis nibh ut lorem condimentum rhoncus ut non ante. Nunc faucibus turpis non eros commodo, quis vestibulum lorem dictum. Donec egestas elementum arcu et elementum. Vestibulum sed volutpat turpis, eu ornare orci. Duis eleifend quam vitae lectus consectetur, ac egestas neque iaculis. Curabitur ut nibh ac elit tincidunt ultrices nec eu purus. Mauris lacus nisi, ultrices in dolor sodales, pulvinar hendrerit diam. Mauris nec gravida dolor. Etiam feugiat magna interdum mauris sollicitudin, sit amet aliquet lectus viverra. In orci nunc, rhoncus eu dignissim in, molestie ac quam. Mauris pretium pharetra turpis eu bibendum. Donec congue posuere quam et aliquam. Integer at magna sit amet leo tristique ornare. Nulla magna felis, dignissim non varius nec, semper ut dui. Quisque quis augue vel augue ullamcorper tempor at et velit. Integer ac est arcu. Duis leo dolor, facilisis ullamcorper justo at, faucibus convallis nunc. Maecenas vel dui ut ligula finibus dapibus. Vestibulum cursus suscipit nisi, in interdum diam faucibus in. Etiam varius luctus magna lacinia tincidunt."
   let haystack = []
-  loop (0, text[:]) {
-    (start, []) => haystack.push(text[start:])
-    (start, [b' ', .. rest] as view) => {
-      haystack.push(text[start:view.start_offset()])
-      continue (rest.start_offset(), rest)
+  for start = 0, view = text[:] {
+    match view {
+      [] => {
+        haystack.push(text[start:])
+        break
+      }
+      [b' ', .. rest] => {
+        haystack.push(text[start:view.start_offset()])
+        continue rest.start_offset(), rest
+      }
+      [_, .. rest] => continue start, rest
     }
-    (start, [_, .. rest]) => continue (start, rest)
   }
   let needle : BytesView = b"magna"
   fn find(haystack : Array[BytesView], needle : BytesView) -> Int? {
@@ -157,13 +162,18 @@ test "bench/test" {
 test "bench/split-words" (b : @bench.T) {
   let text : Bytes = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer varius metus ac nulla ornare, ac dictum ante tincidunt. Praesent quis fringilla neque. Vestibulum eu placerat leo. Phasellus dictum turpis sit amet odio faucibus maximus. Proin imperdiet sit amet nulla in blandit. Nulla feugiat lorem ac ultrices tempor. Donec eu nunc at leo ullamcorper consequat. Sed tincidunt tortor sed libero consectetur vulputate. Nam rutrum, leo ut tempus aliquam, eros velit porttitor leo, sed sollicitudin erat lectus eu magna. Suspendisse blandit diam vitae quam tempor, et sagittis nibh vestibulum. Cras pulvinar velit elementum elit tristique, at volutpat purus eleifend. Integer lacinia nisi turpis, non dignissim leo pulvinar sed. Vivamus a arcu mi. Pellentesque id sem porttitor, tempor turpis a, efficitur ligula. In tristique lectus bibendum commodo tristique. Sed sodales neque quis ex ultrices ultricies. Donec commodo mauris eleifend, ornare orci id, imperdiet nibh. Fusce congue ac nibh ac vehicula. Donec euismod sed dolor at facilisis. In justo nisi, placerat eget rhoncus sed, euismod vel justo. Proin accumsan diam nec libero dignissim, eget sagittis dui laoreet. Duis laoreet, nunc sed dignissim consectetur, arcu metus rutrum dui, ut rutrum tortor diam in leo. Nulla ut sollicitudin nunc. Pellentesque nec varius lectus. Aliquam nec dolor sagittis libero malesuada bibendum. Nam rhoncus maximus metus, posuere aliquet leo hendrerit a. Maecenas ac faucibus eros. Pellentesque venenatis bibendum mi ac mollis. Vivamus lacinia vestibulum laoreet. Vivamus eu efficitur metus. Suspendisse fermentum metus magna, a pretium dui dapibus vitae. Cras maximus convallis semper. Morbi consectetur consequat nisi, eu dapibus turpis venenatis nec. Quisque nec turpis lectus. Cras a lacinia lorem. Donec bibendum augue vel enim dictum, in lobortis ante iaculis. Vivamus euismod tortor non tellus porttitor egestas. Morbi sed tempor lorem. Donec porta tristique turpis ut mollis. In quis nibh ut lorem condimentum rhoncus ut non ante. Nunc faucibus turpis non eros commodo, quis vestibulum lorem dictum. Donec egestas elementum arcu et elementum. Vestibulum sed volutpat turpis, eu ornare orci. Duis eleifend quam vitae lectus consectetur, ac egestas neque iaculis. Curabitur ut nibh ac elit tincidunt ultrices nec eu purus. Mauris lacus nisi, ultrices in dolor sodales, pulvinar hendrerit diam. Mauris nec gravida dolor. Etiam feugiat magna interdum mauris sollicitudin, sit amet aliquet lectus viverra. In orci nunc, rhoncus eu dignissim in, molestie ac quam. Mauris pretium pharetra turpis eu bibendum. Donec congue posuere quam et aliquam. Integer at magna sit amet leo tristique ornare. Nulla magna felis, dignissim non varius nec, semper ut dui. Quisque quis augue vel augue ullamcorper tempor at et velit. Integer ac est arcu. Duis leo dolor, facilisis ullamcorper justo at, faucibus convallis nunc. Maecenas vel dui ut ligula finibus dapibus. Vestibulum cursus suscipit nisi, in interdum diam faucibus in. Etiam varius luctus magna lacinia tincidunt."
   let haystack = []
-  loop (0, text[:]) {
-    (start, []) => haystack.push(text[start:])
-    (start, [b' ', .. rest] as view) => {
-      haystack.push(text[start:view.start_offset()])
-      continue (rest.start_offset(), rest)
+  for start = 0, view = text[:] {
+    match view {
+      [] => {
+        haystack.push(text[start:])
+        break
+      }
+      [b' ', .. rest] => {
+        haystack.push(text[start:view.start_offset()])
+        continue rest.start_offset(), rest
+      }
+      [_, .. rest] => continue start, rest
     }
-    (start, [_, .. rest]) => continue (start, rest)
   }
   let needle : BytesView = b"magna"
   fn find(haystack : Array[BytesView], needle : BytesView) -> Int? {
