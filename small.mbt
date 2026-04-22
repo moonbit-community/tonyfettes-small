@@ -7,7 +7,7 @@ struct SmallBytes {
 }
 
 ///|
-pub fn bytes(bytes : @bytes.View) -> SmallBytes {
+pub fn bytes(bytes : BytesView) -> SmallBytes {
   let old_len = bytes.length()
   if old_len < 8 {
     let off = for i = 0, off = 0UL; i < old_len; {
