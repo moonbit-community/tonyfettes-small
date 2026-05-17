@@ -38,7 +38,7 @@ pub fn bytes(bytes : BytesView) -> SmallBytes {
   } else {
     let old_buf = bytes.data()
     if old_len <= old_buf.length() / 2 {
-      let new_buf = bytes.to_bytes()
+      let new_buf = bytes.to_owned()
       SmallBytes::{ buf: Some(new_buf), off: 0, len: old_len.to_uint64() }
     } else {
       SmallBytes::{
