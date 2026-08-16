@@ -8,12 +8,15 @@ pub fn bytes(BytesView) -> SmallBytes
 
 // Types and methods
 type SmallBytes
+pub fn SmallBytes::equal(Self, Self) -> Bool
+#alias("_[_]")
+pub fn SmallBytes::get(Self, Int) -> Byte
 pub fn SmallBytes::length(Self) -> Int
-pub fn SmallBytes::op_as_view(Self, start? : Int, end? : Int) -> Self
-pub fn SmallBytes::op_get(Self, Int) -> Byte
+pub fn SmallBytes::not_equal(Self, Self) -> Bool
+#alias("_[_:_]")
+pub fn SmallBytes::slice(Self, start? : Int, end? : Int) -> Self
 pub impl Eq for SmallBytes
 
 // Type aliases
 
 // Traits
-

@@ -59,7 +59,8 @@ pub fn SmallBytes::length(self : SmallBytes) -> Int {
 }
 
 ///|
-pub fn SmallBytes::op_as_view(
+#alias("_[_:_]")
+pub fn SmallBytes::slice(
   self : SmallBytes,
   start? : Int = 0,
   end? : Int,
@@ -137,7 +138,8 @@ pub fn SmallBytes::op_as_view(
 }
 
 ///|
-pub fn SmallBytes::op_get(self : SmallBytes, index : Int) -> Byte {
+#alias("_[_]")
+pub fn SmallBytes::get(self : SmallBytes, index : Int) -> Byte {
   guard index >= 0 && index < self.length() else {
     abort("SmallBytes::op_get: index out of bounds")
   }
@@ -153,7 +155,7 @@ pub fn SmallBytes::op_get(self : SmallBytes, index : Int) -> Byte {
 }
 
 ///|
-pub impl Eq for SmallBytes with equal(self : SmallBytes, other : SmallBytes) -> Bool {
+pub impl Eq for SmallBytes with fn equal(self : SmallBytes, other : SmallBytes) -> Bool {
   match self.buf {
     None => self.off == other.off && self.len == other.len
     Some(b1) => {
